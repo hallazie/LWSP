@@ -86,7 +86,7 @@ def feature():
 	dataiter = diter.SaliencyIter()
 	mod = mx.mod.Module(symbol=symbol, context=ctx, data_names=('data',))
 	mod.bind(data_shapes=dataiter.provide_data)
-	sym, arg_params, aux_params = mx.model.load_checkpoint('../params/tune', 50)
+	sym, arg_params, aux_params = mx.model.load_checkpoint('../params/vgg16', 0)
 	arg_params_, aux_params_ = {}, {}
 	for k in arg_params:
 		if k in arg_names:
@@ -99,7 +99,7 @@ def feature():
 	data = np.array(Image.open('../data/%s.jpg'%fname)).transpose((2,0,1))
 	mod.forward(Batch([mx.nd.array(np.expand_dims(data, axis=0))]))
 	# mod.forward(dataiter.next())
-	out = mod.get_outputs()[0][0].asnumpy()
+	out = mod.get_outputs()[1][0].asnumpy()
 	print out.shape
 	out = 255*(out-np.amin(out))/(np.amax(out)-np.amin(out))
 	for i, e in enumerate(out):
@@ -147,4 +147,4 @@ def predict():
 			print '%s finished'%f
 
 if __name__ == '__main__':
-	predict()
+	feature()
